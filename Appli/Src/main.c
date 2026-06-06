@@ -108,8 +108,8 @@ int main(void)
     /* Toggle LED1 every 250ms */
     BSP_LED_Toggle(LED_GREEN);
     HAL_Delay(250);
-    HAL_TogglePin(GPIOG, GPIO_PIN_0);
-    HAL_TogglePin(GPIOG, GPIO_PIN_8);
+    HAL_GPIO_TogglePin(GPIOG, GPIO_PIN_0);
+    HAL_GPIO_TogglePin(GPIOG, GPIO_PIN_8);
     HAL_Delay(1150);
     /* USER CODE END WHILE */
 
