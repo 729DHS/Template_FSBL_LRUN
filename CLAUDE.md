@@ -17,6 +17,11 @@ cd build/Debug
 cube-cmake --build . --target all
 ```
 
+清理：
+```bash
+cube-cmake --build . --target clean
+```
+
 编译产物：
 
 | 子项目 | 输出位置 |
@@ -40,10 +45,10 @@ C:\APPS\Programmer\bin\STM32_SigningTool_CLI.exe
 
 ```powershell
 # Appli
-& "C:\APPS\Programmer\bin\STM32_SigningTool_CLI.exe" -bin "<Appli.bin>" -nk -of 0x80000000 -t fsbl -o "<Appli-trusted.bin>" -hv 2.3 -align -dump
+& "C:\APPS\Programmer\bin\STM32_SigningTool_CLI.exe" -bin "<Appli.bin>" -nk -of 0x80000000 -t fsbl -o "<Appli-trusted.bin>" -hv 2.3 -align -s
 
 # FSBL
-& "C:\APPS\Programmer\bin\STM32_SigningTool_CLI.exe" -bin "<FSBL.bin>" -nk -of 0x80000000 -t fsbl -o "<FSBL-trusted.bin>" -hv 2.3 -align -dump
+& "C:\APPS\Programmer\bin\STM32_SigningTool_CLI.exe" -bin "<FSBL.bin>" -nk -of 0x80000000 -t fsbl -o "<FSBL-trusted.bin>" -hv 2.3 -align -s
 ```
 
 ### 参数说明
@@ -55,6 +60,7 @@ C:\APPS\Programmer\bin\STM32_SigningTool_CLI.exe
 | `-t fsbl` | FSBL 类型 header |
 | `-hv 2.3` | Header version（N6 必须用 2.3） |
 | `-align` | **必须加**（CubeProgrammer v2.21+ 必须，payload 对齐到 0x400） |
+| `-s` | 静默模式（不弹出确认覆盖提示） |
 
 ---
 
@@ -75,6 +81,29 @@ C:\APPS\Programmer\bin\STM32_SigningTool_CLI.exe
 |------|-------|-------|------|
 | DEV（调试） | 任意 | 2-3 | IDE 加载 FSBL 到 RAM，可源码调试 |
 | Boot from Flash | 1-2 | 1-2 | 独立运行，无法源码调试 |
+
+### LRUN（Load & Run）
+
+程序从外部 Flash **复制到** 内部 RAM（0x34000400），然后从 RAM 执行。
+- FSBL 干的就是这个活：初始化 XSPI → 把 Appli 复制到 RAM → 跳转
+- Appli 的 `.bin/.hex` 需要签名后烧录
+
+### XSPI（eXecute in Place）
+
+程序不复制，直接在外部 Flash 里原地执行，CPU 通过 XSPI 接口直接取指。
+- ROM 地址：`0x90100400`（外部 XSPI Flash 基地址 0x9010_0000 + header 0x400）
+- Appli 的 linker 文件用 `STM32N657XX_ROMxspi*.ld`
+
+### 链接文件名规则
+
+格式：`ROM在哪里_RUN_RAM在哪里`
+
+| 链接文件 | 含义 |
+|---------|------|
+| `STM32N657XX_LRUN` | Appli 放在内部 RAM（由 FSBL 加载） |
+| `STM32N657XX_ROMxspi1` | Appli 在外部 XSPI1 Flash，原地执行 |
+| `STM32N657XX_LRUN_RAMxspi2` | Appli 放 RAM，但从 XSPI2 的 Flash 加载 |
+| `STM32N657XX_ROMxspi1_RAMxspi3` | Appli 在 XSPI1，RAM 用 XSPI3 |
 
 ---
 
@@ -140,9 +169,23 @@ OTP 配置好后，编译时可以加回 `NO_OTP_FUSE`（跳过 OTP 配置步骤
 
 ---
 
+## 路径问题说明
+
+本项目使用 **Windows Junction** 解决固件库路径问题：
+
+```
+C:/APPS/Drivers/BSP/STM32N6xx_Nucleo → C:/Users/Q/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0/Drivers/BSP/STM32N6xx_Nucleo
+C:/APPS/Middlewares → C:/Users/Q/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0/Middlewares
+```
+
+换电脑后需要重新创建这些 junction。
+
+---
+
 ## 注意事项
 
 1. **Middlewares 路径是绝对路径**，换电脑后需要重新配置
 2. **OTP 配置不可逆**，第一次确认后再烧录
 3. **签名必须加 `-align`**，否则芯片无法识别
 4. **第一次必须禁用 `NO_OTP_FUSE`**，让 FSBL 自动配置 OTP
+5. **签名推荐加 `-s` 静默模式**，避免弹出覆盖确认提示

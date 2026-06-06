@@ -41,30 +41,14 @@ cube-cmake --build . --target all
 C:\APPS\Programmer\bin\STM32_SigningTool_CLI.exe
 ```
 
-### 签名命令格式
+### 签名命令
 
 ```powershell
-& "C:\APPS\Programmer\bin\STM32_SigningTool_CLI.exe" `
-    -bin "<输入.bin>" `
-    -nk `
-    -of 0x80000000 `
-    -t fsbl `
-    -o "<输出-trusted.bin>" `
-    -hv 2.3 `
-    -align `
-    -dump
-```
+# Appli
+& "C:\APPS\Programmer\bin\STM32_SigningTool_CLI.exe" -bin "C:\APPS\COPRO\MCU\CUBEMX\N6_MX\Template_FSBL_LRUN\Appli\build\Template_FSBL_LRUN_Appli.bin" -nk -of 0x80000000 -t fsbl -o "C:\APPS\COPRO\MCU\CUBEMX\N6_MX\Template_FSBL_LRUN\Appli\build\Template_FSBL_LRUN_Appli-trusted.bin" -hv 2.3 -align -s
 
-### 签名 Appli
-
-```powershell
-& "C:\APPS\Programmer\bin\STM32_SigningTool_CLI.exe" -bin "C:\APPS\COPRO\MCU\CUBEMX\N6_MX\Template_FSBL_LRUN\Appli\build\Template_FSBL_LRUN_Appli.bin" -nk -of 0x80000000 -t fsbl -o "C:\APPS\COPRO\MCU\CUBEMX\N6_MX\Template_FSBL_LRUN\Appli\build\Template_FSBL_LRUN_Appli-trusted.bin" -hv 2.3 -align -dump
-```
-
-### 签名 FSBL
-
-```powershell
-& "C:\APPS\Programmer\bin\STM32_SigningTool_CLI.exe" -bin "C:\APPS\COPRO\MCU\CUBEMX\N6_MX\Template_FSBL_LRUN\FSBL\build\Template_FSBL_LRUN_FSBL.bin" -nk -of 0x80000000 -t fsbl -o "C:\APPS\COPRO\MCU\CUBEMX\N6_MX\Template_FSBL_LRUN\FSBL\build\Template_FSBL_LRUN_FSBL-trusted.bin" -hv 2.3 -align -dump
+# FSBL
+& "C:\APPS\Programmer\bin\STM32_SigningTool_CLI.exe" -bin "C:\APPS\COPRO\MCU\CUBEMX\N6_MX\Template_FSBL_LRUN\FSBL\build\Template_FSBL_LRUN_FSBL.bin" -nk -of 0x80000000 -t fsbl -o "C:\APPS\COPRO\MCU\CUBEMX\N6_MX\Template_FSBL_LRUN\FSBL\build\Template_FSBL_LRUN_FSBL-trusted.bin" -hv 2.3 -align -s
 ```
 
 ### 参数说明
@@ -77,7 +61,7 @@ C:\APPS\Programmer\bin\STM32_SigningTool_CLI.exe
 | `-t fsbl` | 生成 FSBL 类型的 header |
 | `-hv 2.3` | Header version 2.3（N6 必须用这个） |
 | `-align` | **必须加**（CubeProgrammer v2.21+ 必须，payload 对齐到 0x400） |
-| `-dump` | 生成后显示 header 信息 |
+| `-s` | 静默模式（不弹出确认覆盖提示） |
 
 ---
 
@@ -93,6 +77,29 @@ C:\APPS\Programmer\bin\STM32_SigningTool_CLI.exe
 ---
 
 ## 启动模式
+
+### LRUN（Load & Run）
+
+程序从外部 Flash **复制到** 内部 RAM（0x34000400），然后从 RAM 执行。
+- FSBL 干的就是这个活：初始化 XSPI → 把 Appli 复制到 RAM → 跳转
+- Appli 的 `.bin/.hex` 需要签名后烧录
+
+### XSPI（eXecute in Place）
+
+程序不复制，直接在外部 Flash 里原地执行，CPU 通过 XSPI 接口直接取指。
+- ROM 地址：`0x90100400`（外部 XSPI Flash 基地址 0x9010_0000 + header 0x400）
+- Appli 的 linker 文件用 `STM32N657XX_ROMxspi*.ld`
+
+### 链接文件名规则
+
+格式：`ROM在哪里_RUN_RAM在哪里`
+
+| 链接文件 | 含义 |
+|---------|------|
+| `STM32N657XX_LRUN` | Appli 放在内部 RAM（由 FSBL 加载） |
+| `STM32N657XX_ROMxspi1` | Appli 在外部 XSPI1 Flash，原地执行 |
+| `STM32N657XX_LRUN_RAMxspi2` | Appli 放 RAM，但从 XSPI2 的 Flash 加载 |
+| `STM32N657XX_ROMxspi1_RAMxspi3` | Appli 在 XSPI1，RAM 用 XSPI3 |
 
 ### DEV 模式（调试用）
 
@@ -185,6 +192,10 @@ add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
 
 检查路径是否正确，PowerShell 里要用 `& "..."` 或在 CMD 里运行。
 
+### Q:签名时弹出 "Do you want to replace this file?"？
+
+加 `-s` 参数（静默模式）即可。
+
 ### Q: Boot from Flash 模式不运行？
 
 1. 检查 `-align` 参数是否加了
@@ -218,7 +229,7 @@ add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
 ```
 1. 删除 FSBL/mx-generated.cmake 中的 NO_OTP_FUSE
 2. 编译
-3. 签名 FSBL 和 Appli
+3. 签名 FSBL 和 Appli（加 -s 静默模式）
 4. DEV 模式：IDE 加载 FSBL.elf 到 RAM 运行（配置 OTP）
 5. 烧录 Appli-trusted.bin 到 0x7010 0000
 6. Reset → 运行
@@ -228,7 +239,7 @@ add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
 
 ```
 1. 编译
-2. 签名
+2. 签名（加 -s）
 3. 烧录 Appli-trusted.bin 到 0x7010 0000
 4. （可选）烧录 FSBL-trusted.bin 到 0x7000 0000
 5. Boot from Flash 模式：BOOT0=1-2, BOOT1=1-2, Reset

@@ -95,6 +95,13 @@ add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
     COMMENT "Generating HEX: ${CMAKE_PROJECT_NAME}.hex"
 )
 
+# Post-build: sign .bin for external Flash
+find_program(SIGNING_TOOL C:/APPS/Programmer/bin/STM32_SigningTool_CLI.exe)
+add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+    COMMAND ${SIGNING_TOOL} -bin ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}.bin -nk -of 0x80000000 -t fsbl -o ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}-trusted.bin -hv 2.3 -align -s
+    COMMENT "Signing ${CMAKE_PROJECT_NAME}.bin"
+)
+
 
 
 

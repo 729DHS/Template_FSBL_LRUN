@@ -107,7 +107,7 @@ int main(void)
   {
     /* Toggle LED1 every 250ms */
     HAL_GPIO_TogglePin(GPIOG, GPIO_PIN_0);
-    HAL_Delay(850);
+    // HAL_Delay(850);
     HAL_GPIO_TogglePin(GPIOG, GPIO_PIN_8);
     HAL_Delay(750);
     /* USER CODE END WHILE */

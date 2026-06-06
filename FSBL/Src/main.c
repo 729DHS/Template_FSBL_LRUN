@@ -108,9 +108,11 @@ int main(void)
   /* USER CODE BEGIN 2 */
   
   /* 翻转 PG10，延时1s，再次翻转 */
+  HAL_Delay(1000);
   HAL_GPIO_TogglePin(GPIOG, GPIO_PIN_10);
   HAL_Delay(1000);
   HAL_GPIO_TogglePin(GPIOG, GPIO_PIN_10);
+  HAL_Delay(400);
 
   /* Initialise the serial memory */
   MX_EXTMEM_Init();
