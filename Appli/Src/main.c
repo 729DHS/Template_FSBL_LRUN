@@ -106,11 +106,10 @@ int main(void)
   while (1)
   {
     /* Toggle LED1 every 250ms */
-    BSP_LED_Toggle(LED_GREEN);
-    HAL_Delay(250);
     HAL_GPIO_TogglePin(GPIOG, GPIO_PIN_0);
+    HAL_Delay(850);
     HAL_GPIO_TogglePin(GPIOG, GPIO_PIN_8);
-    HAL_Delay(1150);
+    HAL_Delay(750);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
