@@ -106,6 +106,12 @@ int main(void)
   MX_GPIO_Init();
   MX_XSPI2_Init();
   /* USER CODE BEGIN 2 */
+  
+  /* 翻转 PG10，延时1s，再次翻转 */
+  HAL_GPIO_TogglePin(GPIOG, GPIO_PIN_10);
+  HAL_Delay(1000);
+  HAL_GPIO_TogglePin(GPIOG, GPIO_PIN_10);
+
   /* Initialise the serial memory */
   MX_EXTMEM_Init();
 
@@ -314,12 +320,24 @@ static void MX_XSPI2_Init(void)
   */
 static void MX_GPIO_Init(void)
 {
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
   /* USER CODE BEGIN MX_GPIO_Init_1 */
 
   /* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPION_CLK_ENABLE();
+  __HAL_RCC_GPIOG_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOG, GPIO_PIN_10, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin : PG10 */
+  GPIO_InitStruct.Pin = GPIO_PIN_10;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 

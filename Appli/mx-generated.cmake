@@ -10,7 +10,7 @@ set(MX_Defines_Syms
 set(MX_Include_Dirs
     ${CMAKE_CURRENT_SOURCE_DIR}/Inc
     ${CMAKE_CURRENT_SOURCE_DIR}/../Secure_nsclib
-    C:/Users/Q/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0/Drivers/BSP/STM32N6xx_Nucleo
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../../Drivers/BSP/STM32N6xx_Nucleo
     ${CMAKE_CURRENT_SOURCE_DIR}/../Drivers/STM32N6xx_HAL_Driver/Inc
     ${CMAKE_CURRENT_SOURCE_DIR}/../Drivers/CMSIS/Device/ST/STM32N6xx/Include
     ${CMAKE_CURRENT_SOURCE_DIR}/../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy
@@ -29,7 +29,7 @@ set(MX_Application_Src
 
 # STM32 HAL/LL Drivers
 set(STM32_Drivers_Src
-    C:/Users/Q/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0/Drivers/BSP/STM32N6xx_Nucleo/stm32n6xx_nucleo.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../../Drivers/BSP/STM32N6xx_Nucleo/stm32n6xx_nucleo.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Src/system_stm32n6xx_s.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_cortex.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_dma.c
