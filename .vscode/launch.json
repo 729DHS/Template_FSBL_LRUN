@@ -1,0 +1,31 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "stlinkgdbtarget",
+            "request": "launch",
+            "name": "NUCLEO-N657X0-Q Debug (FSBL + Appli)",
+            "origin": "snippet",
+            "cwd": "${workspaceFolder}",
+            "preBuild": "${command:st-stm32-ide-debug-launch.build}",
+            "runEntry": "BOOT_Application",
+            "svdPath": "C:\\APPS\\Programmer\\SVD\\STM32N657.svd",
+            "imagesAndSymbols": [
+                {
+                    "symbolFileName": "${workspaceFolder}/Appli/build/Template_FSBL_LRUN_Appli.elf",
+                    "imageFileName": "${workspaceFolder}/Appli/build/Appli-trusted.elf"
+                },
+                {
+                    "symbolFileName": "${workspaceFolder}/FSBL/build/Template_FSBL_LRUN_FSBL.elf",
+                    "imageFileName": "${workspaceFolder}/FSBL/build/Template_FSBL_LRUN_FSBL.elf"
+                }
+            ],
+            "serverExtLoader": [
+                {
+                    "loader": "C:\\APPS\\Programmer\\bin\\ExternalLoader\\MX25UM51245G_STM32N6570-NUCLEO.stldr",
+                    "initialize": false
+                }
+            ]
+        }
+    ]
+}

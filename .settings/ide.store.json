@@ -5,6 +5,6 @@
   "device": "STM32N657X0H3Q",
   "toolchain": "GCC",
   "core": "Cortex-M55",
-  "order": 2,
-  "tz": "Secure"
+  "order": 1,
+  "tz": "Non-secure"
 }

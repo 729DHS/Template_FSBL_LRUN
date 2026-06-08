@@ -97,9 +97,16 @@ add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
 
 # Post-build: sign .bin for external Flash
 find_program(SIGNING_TOOL C:/APPS/Programmer/bin/STM32_SigningTool_CLI.exe)
+set(FSBL_OUTPUT "${CMAKE_BINARY_DIR}/FSBL-trusted.bin")
 add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
-    COMMAND ${SIGNING_TOOL} -bin ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}.bin -nk -of 0x80000000 -t fsbl -o ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}-trusted.bin -hv 2.3 -align -s
-    COMMENT "Signing ${CMAKE_PROJECT_NAME}.bin"
+    COMMAND ${SIGNING_TOOL} -bin ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}.bin -nk -of 0x80000000 -t fsbl -o ${FSBL_OUTPUT} -hv 2.3 -align -s
+    COMMENT "Signing FSBL binary -> FSBL-trusted.bin"
+)
+
+# Post-build: convert signed FSBL .bin back to .elf (for debugger)
+add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+    COMMAND ${OBJCOPY} -I binary -O elf32-littlearm -B arm --change-addresses=0x70000000 ${FSBL_OUTPUT} ${CMAKE_BINARY_DIR}/FSBL-trusted.elf
+    COMMENT "Converting FSBL-trusted.bin -> FSBL-trusted.elf @ 0x70000000"
 )
 
 
