@@ -10,7 +10,7 @@ set(MX_Defines_Syms
 # STM32CubeMX generated include paths
 set(MX_Include_Dirs
     ${CMAKE_CURRENT_SOURCE_DIR}/Inc
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../../Middlewares/ST/STM32_ExtMem_Manager
+    C:/Users/Q/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0/Middlewares/ST/STM32_ExtMem_Manager
     ${CMAKE_CURRENT_SOURCE_DIR}/../Drivers/STM32N6xx_HAL_Driver/Inc
     ${CMAKE_CURRENT_SOURCE_DIR}/../Drivers/CMSIS/Device/ST/STM32N6xx/Include
     ${CMAKE_CURRENT_SOURCE_DIR}/../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy
@@ -47,11 +47,11 @@ set(STM32_Drivers_Src
 # Drivers Midllewares
 
 set(STM32_ExtMem_Manager_Src
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../../Middlewares/ST/STM32_ExtMem_Manager/sal/stm32_sal_xspi.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../../Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_data.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../../Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_driver.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../../Middlewares/ST/STM32_ExtMem_Manager/boot/stm32_boot_lrun.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../../Middlewares/ST/STM32_ExtMem_Manager/stm32_extmem.c
+    C:/Users/Q/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0/Middlewares/ST/STM32_ExtMem_Manager/sal/stm32_sal_xspi.c
+    C:/Users/Q/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_data.c
+    C:/Users/Q/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_driver.c
+    C:/Users/Q/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0/Middlewares/ST/STM32_ExtMem_Manager/boot/stm32_boot_lrun.c
+    C:/Users/Q/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0/Middlewares/ST/STM32_ExtMem_Manager/stm32_extmem.c
 )
 # Link directories setup
 set(MX_LINK_DIRS
